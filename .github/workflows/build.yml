@@ -15,7 +15,7 @@ jobs:
     environment: BUILD
 
     steps:
-      - name: Valida Versão
+      - name: Valida Versão da tag
         run: |
           VERSAO="${{ github.event.inputs.versao }}"
           if [[ !"$VERSAO" =~ ^[0-9]+\.[0-9]+\.[0-9]+$ ]]; then
@@ -23,6 +23,17 @@ jobs:
             exit 1
           fi
           echo "Versão válida: $VERSAO"
+      
+      - name: Valida versão no DockerHub
+        run: |
+          VERSAO="${{ github.event.inputs.versao }}"
+          RESPONSE=$(curl -s -o /dev/null -w "%{http_code}" "https://hub.docker.com/v2/repositories/${{ github.repository }}/tags/${VERSAO}/")
+          if [ "$RESPONSE" -eq 200 ]; then
+            echo "Tag $VERSAO já existe no DockerHub."
+            exit 1
+          else
+            echo "Tag $VERSAO não existe no DockerHub. Prosseguindo com o build."
+          fi
 
       - name: Checkout repository
         uses: actions/checkout@v3
