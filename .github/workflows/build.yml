@@ -58,13 +58,6 @@ jobs:
           mvn versions:set -DnewVersion=$VERSAO
           mvn versions:commit
 
-      - name: Update Versão Package.json
-        run: |
-          VERSAO="${{ github.event.inputs.versao }}"
-          cd src/frontend/web-todo
-          npx npm-version $VERSAO --no-git-tag-version
-          cd ../../../..
-
       - name: Build with Maven
         run: mvn clean package -Pbuild-angular
 
