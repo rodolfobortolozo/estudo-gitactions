@@ -72,3 +72,4 @@ jobs:
         uses: actions/upload-artifact@v5
         with:
           name: angular-build - ${{ github.run_id}}
+          path: .
