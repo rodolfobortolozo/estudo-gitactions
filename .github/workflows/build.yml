@@ -53,11 +53,11 @@ jobs:
         with:
           context: .
           push: true
-          tags: ${{ vars.DOCKERHUB_USERNAME }}/${{ github.repository }}:latest
+          tags: ${{ github.repository }}:latest
 
       - name: Build and push Docker image with tag
         uses: docker/build-push-action@v6
         with:
           context: .
           push: true
-          tags: ${{ vars.DOCKERHUB_USERNAME }}/${{ github.repository }}:${{ github.run_id }}
+          tags: ${{ github.repository }}:${{ github.run_id }}
