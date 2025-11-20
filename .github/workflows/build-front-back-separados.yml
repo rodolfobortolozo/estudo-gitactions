@@ -43,6 +43,7 @@ jobs:
 
   build_Angular:
     runs-on: ubuntu-latest
+    needs: build_Java # Indica que depende do job build_Java
         
     steps:
 
