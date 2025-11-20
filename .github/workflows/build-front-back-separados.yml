@@ -20,7 +20,7 @@ jobs:
 
       # Empacotar o código-fonte para compartilhar entre jobs, para não precisar fazer checkout novamente
       - name: Upload source code
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v5
         with:
           name: source-code
           path: .
@@ -48,7 +48,7 @@ jobs:
 
       # Baixa o código-fonte do job anterior
       - name: Download source
-        uses: actions/download-artifact@v3
+        uses: actions/download-artifact@v5
         with:
           name: source-code
 
