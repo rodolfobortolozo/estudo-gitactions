@@ -31,7 +31,7 @@ jobs:
         with:
           name: codigo-java-fonte
           path: |
-            src/**
+            ./**
             !src/frontend/** # ignora o frontend
 
   build_Java:
