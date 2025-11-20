@@ -65,7 +65,7 @@ jobs:
         working-directory: ./src/frontend/web-todo
 
       - name: Build Angular application
-        run: npm run build -- --prod
+        run: npm run build -- --configuration production
         working-directory: ./src/frontend/web-todo
 
       - name: Archive Angular build artifacts
