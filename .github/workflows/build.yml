@@ -29,8 +29,9 @@ jobs:
         run: mvn -B clean package -Pbuild-angular
 
       - name: Archive build artifacts
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v5
         with:
           name: java-angular-build
-          
+          path: target/*.jar
+
       
