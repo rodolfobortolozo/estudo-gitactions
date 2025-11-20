@@ -1,0 +1,59 @@
+name: Build java
+
+on:
+  workflow_dispatch:
+    inputs:
+      versao:
+        description: 'Versão do App'
+        required: true
+        default: '1.0.0'
+        type: string
+
+jobs:
+  build_Java:
+    runs-on: ubuntu-latest
+    environment: BUILD
+
+    steps:     
+      - name: Checkout repository
+        uses: actions/checkout@v3
+      
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+         
+      - name: Build with Maven
+        run: mvn -B clean package -Pbuild-angular
+
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: java-angular-build - ${{ github.run_id}}
+          path: target/*.jar
+
+  build_Angular:
+    runs-on: ubuntu-latest
+    
+    steps:
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+          cache-dependency-path: './src/frontend/web-todo/package-lock.json'
+      
+      - name: Install dependencies
+        run: npm install
+        working-directory: ./src/frontend/web-todo
+
+      - name: Build Angular application
+        run: npm run build -- --prod
+        working-directory: ./src/frontend/web-todo
+
+      - name: Archive Angular build artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: angular-build - ${{ github.run_id}}
