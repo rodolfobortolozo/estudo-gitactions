@@ -1,0 +1,95 @@
+name: Build Separados Java e Angular V2
+
+on:
+  workflow_dispatch:
+    inputs:
+      versao:
+        description: 'Versão do App'
+        required: true
+        default: '1.0.0'
+        type: string
+
+jobs:
+
+  upload_source:
+     runs-on: ubuntu-latest
+
+     steps:
+      - name: Checkout repository
+        uses: actions/checkout@v3
+
+      # Empacotar o código-fonte para compartilhar entre jobs, para não precisar fazer checkout novamente
+      - name: Upload source code Frontend
+        uses: actions/upload-artifact@v5
+        with:
+          name: codigo-angular-fonte
+          #path: . # empacota todo o repositório
+          path: ./src/frontend/web-todo/**
+      
+      - name: Upload source code Backend
+        uses: actions/upload-artifact@v5
+        with:
+          name: codigo-java-fonte
+          path: |
+            src/**
+            !src/frontend/** # ignora o frontend
+
+  build_Java:
+    runs-on: ubuntu-latest
+    environment: BUILD
+    needs: upload_source # Indica que depende do job upload_source
+
+    steps: 
+      - name: Set up JDK 21
+        uses: actions/setup-java@v4
+        with:
+          java-version: '21'
+          distribution: 'temurin'
+          cache: 'maven'
+      
+      - name: Download source BackEnd
+        uses: actions/download-artifact@v4
+        with:
+          name: codigo-java-fonte
+
+      - name: Build with Maven
+        run: mvn -B clean package
+
+      - name: Archive build artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: java-angular-build - ${{ github.run_id}}
+          path: target/*.jar
+
+  build_Angular:
+    runs-on: ubuntu-latest
+    needs: upload_source # Indica que depende do job upload_source
+        
+    steps:
+
+      # Baixa o código-fonte do job anterior
+      - name: Download source
+        uses: actions/download-artifact@v4
+        with:
+          name: codigo-angular-fonte
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '20'
+          cache: 'npm'
+          #cache-dependency-path: './src/frontend/web-todo/package-lock.json'
+      
+      - name: Install dependencies
+        run: npm install
+        #working-directory: ./src/frontend/web-todo
+
+      - name: Build Angular application
+        run: npm run build -- --configuration production
+        #working-directory: ./src/frontend/web-todo
+
+      - name: Archive Angular build artifacts
+        uses: actions/upload-artifact@v5
+        with:
+          name: angular-build - ${{ github.run_id}}
+          path: ./dist/web-todo/browser
