@@ -17,6 +17,13 @@ jobs:
     steps:     
       - name: Checkout repository
         uses: actions/checkout@v3
+
+      # Empacotar o código-fonte para compartilhar entre jobs, para não precisar fazer checkout novamente
+      - name: Upload source code
+        uses: actions/upload-artifact@v3
+        with:
+          name: source-code
+          path: .
       
       - name: Set up JDK 21
         uses: actions/setup-java@v4
@@ -26,7 +33,7 @@ jobs:
           cache: 'maven'
          
       - name: Build with Maven
-        run: mvn -B clean package -Pbuild-angular
+        run: mvn -B clean package
 
       - name: Archive build artifacts
         uses: actions/upload-artifact@v5
@@ -36,8 +43,15 @@ jobs:
 
   build_Angular:
     runs-on: ubuntu-latest
-    
+        
     steps:
+
+      # Baixa o código-fonte do job anterior
+      - name: Download source
+        uses: actions/download-artifact@v3
+        with:
+          name: source-code
+
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
