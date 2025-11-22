@@ -180,7 +180,7 @@
                                     <outputDirectory>${project.build.outputDirectory}/static</outputDirectory>
                                     <resources>
                                         <resource>
-                                            <directory>${project.basedir}/src/frontend/web-todo/dist/web-todo/browser</directory>
+                                            <directory>${project.basedir}/src/frontend/web-todo/dist/web-todo</directory>
                                             <includes>
                                                 <include>**/*</include>
                                             </includes>
